@@ -1,26 +1,56 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { Component } from 'react';
+import AppBar from '@material-ui/core/AppBar';
+import Toolbar from '@material-ui/core/Toolbar';
+import Typography from '@material-ui/core/Typography';
+import AddToDo from './AddToDo/AddToDo';
+import ToDos from './ToDos/ToDos';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+class App extends Component {
+
+  state = {
+    Todos: ['Feed dogs', 'Walk dogs', 'cook dinner'],
+    userInput: ''
+  }
+
+  addTodo = (event) => {
+    event.preventDefault();
+    const stateCopy = [...this.state.Todos];
+    stateCopy.push(this.state.userInput);
+    this.setState({Todos:stateCopy,userInput:''});
+  }
+
+  updateInput = (event) => {
+    this.setState({userInput:event.target.value})
+  }
+
+  deleteTodo = (index) => {
+    const stateCopy = [...this.state.Todos];
+    stateCopy.splice(index,1);
+    this.setState({Todos:stateCopy});
+  }
+
+
+  render() {
+    const toDos = this.state.Todos.map((todo, index) => <ToDos key={index} deleteTodo={() => this.deleteTodo(index)} todo={todo} />);
+
+    return (
+      <div>
+        <AppBar position="static">
+          <Toolbar variant="dense">
+            <Typography variant="h6" color="inherit">
+              <p>Todo List App</p>
+            </Typography>
+          </Toolbar>
+        </AppBar>
+        <AddToDo 
+          addTodo = {this.addTodo.bind(this)}
+          userInput = {this.state.userInput}
+          updateInput = {this.updateInput.bind(this)} />
+          <hr style={{color:'#d3d3d3'}} />
+        {toDos}
+      </div>
+    )
+  }
 }
 
 export default App;
